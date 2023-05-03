@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.models import User
 from core.models import (
     CustomUser,
     Comment,
@@ -21,13 +22,14 @@ class CustomUserInline(admin.StackedInline):
     model = Team
 
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('email', 'first_name', 'last_name', 'is_staff', 'is_active')
+    list_display = ('id', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')
     list_filter = ('is_staff', 'is_active')
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
-    inlines = [CustomUserInline]
+    # inlines = [CustomUserInline]
 
-admin.site.register(CustomUser)
+
+admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Comment)
 admin.site.register(Share)
 admin.site.register(Table)
