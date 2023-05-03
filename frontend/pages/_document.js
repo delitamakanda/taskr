@@ -29,8 +29,8 @@ MUIDocument.getInitialProps = async (ctx) => {
     enhanceApp: (App) => (props) => (
       <App
         emotionCache={emotionCache}
-        emotionServer={emotionServer}
-        {...props}/>)
+        {...props}/>
+      )
   })
 
   const initialProps = await Document.getInitialProps(ctx)
