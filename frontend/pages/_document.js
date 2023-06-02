@@ -10,9 +10,11 @@ export default class MUIDocument extends Document {
         <Head>
           <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
         </Head>
-        <body>
-          <Main />
-          <NextScript />
+        <body id="__django_nextjs_body">
+          <div id="__django_nextjs_body_begin" />
+            <Main />
+            <NextScript />
+          <div id="__django_nextjs_body_end" />
         </body>
       </Html>
     )
