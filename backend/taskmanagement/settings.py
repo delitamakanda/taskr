@@ -38,11 +38,25 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'django_nextjs',
-    'core',
+    'core.apps.CoreConfig',
+    'authentication.apps.AuthenticationConfig',
+
+    'rest_framework',
+    'rest_framework.authtoken',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+
 ]
 
+SITE_ID = 1
 
 AUTH_USER_MODEL = 'core.CustomUser'
 
@@ -131,4 +145,43 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 NEXTJS_SETTINGS = {
     "nextjs_server_url": "http://127.0.0.1:3000",
+}
+
+# Rest Framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    ),
+}
+
+# SMTP Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Allauth Configuration
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+EMAIL_CONFIRM_REDIRECT_BASE_URL = 'http://127.0.0.1:8000/email/confirm/'
+PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = 'http://127.0.0.1:8000/password-reset/confirm/'
+
+SOCIAL_ACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID'),
+            'secret': os.environ.get('GOOGLE_CLIENT_SECRET'),
+            'key': ''
+        },
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+    }
+}
+
+GOOGLE_LOGIN_REDIRECT_URL = 'localhost:8000/'
+
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'taskr',
+    'JWT_AUTH_REFRESH_COOKIE': 'taskr-refresh',
 }
