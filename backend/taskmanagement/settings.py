@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
-    'django_nextjs',
+    'django_nextjs.apps.DjangoNextJSConfig',
     'core.apps.CoreConfig',
     'authentication.apps.AuthenticationConfig',
 
@@ -144,7 +144,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 NEXTJS_SETTINGS = {
-    "nextjs_server_url": "http://127.0.0.1:3000",
+    "nextjs_server_url": "http://localhost:3000",
 }
 
 # Rest Framework

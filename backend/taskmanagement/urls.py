@@ -22,6 +22,6 @@ urlpatterns = [
     path('api/auth/', include('authentication.urls')),
     path('api/', api.urls),
     path('admin/', admin.site.urls),
-    path('', include('core.urls')),
     path('', include('django_nextjs.urls')),
+    path('', include('core.urls')),
 ]
