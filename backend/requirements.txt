@@ -12,6 +12,7 @@ defusedxml==0.7.1
 dj-rest-auth==4.0.1
 Django==4.2
 django-allauth==0.54.0
+django-cors-headers==4.3.1
 django-nextjs==2.2.3
 django-ninja==0.22.1
 djangorestframework==3.14.0

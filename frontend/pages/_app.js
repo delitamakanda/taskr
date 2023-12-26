@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import { SessionProvider } from 'next-auth/react'
 import { CacheProvider } from '@emotion/react'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 import createEmotionCache from '@/utility/createEmotionCache'
@@ -8,7 +9,7 @@ import darkTheme from '@/styles/theme/darkTheme'
 import '@/styles/globals.css'
 const clientCache = createEmotionCache()
 
-const App = ({ Component, emotionCache = clientCache, pageProps }) => {
+const App = ({ Component, emotionCache = clientCache, pageProps: { session, ...pageProps } }) => {
   const [activeTheme, setActiveTheme ] = useState(lightTheme);
   const [selectedTheme, setSelectedTheme ] = useState('light');
 
@@ -22,15 +23,17 @@ const App = ({ Component, emotionCache = clientCache, pageProps }) => {
 
   const toggleTheme = () => {
     const theme = selectedTheme === 'light' ? 'dark' : 'light';
-    setSelectedTheme(theme);
+    setSelectedTheme
+    (theme);
   }
-
   return (
     <CacheProvider value={emotionCache}>
+      <SessionProvider session={session}>
       <ThemeProvider theme={activeTheme}>
         <CssBaseline />
         <Component {...pageProps} toggleTheme={toggleTheme} />
       </ThemeProvider>
+    </SessionProvider>
     </CacheProvider>
   )
 }

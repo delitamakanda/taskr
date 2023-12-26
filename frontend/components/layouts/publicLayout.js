@@ -9,6 +9,11 @@ const PublicLayout = ({ children}) => {
 
     return (
         <div>
+            <header>
+                <Container>
+                    <h1>Taskr</h1>
+                </Container>
+            </header>
             <Container>{children}</Container>
             <footer>
                 <Container>
@@ -16,6 +21,11 @@ const PublicLayout = ({ children}) => {
                         <li>
                             <Link href="/privacy-policy">
                                 Privacy Policy
+                            </Link>
+                        </li>
+                        <li>
+                            <Link href="/">
+                                Home
                             </Link>
                         </li>
                     </ul>

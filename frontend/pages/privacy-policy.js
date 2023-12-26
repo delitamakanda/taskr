@@ -1,5 +1,6 @@
 import Head from "next/head";
 import PublicLayout from "@/components/layouts/publicLayout";
+import { Button } from "@mui/material";
 
 const PolicyPrivacy = () => {
     return (
@@ -10,7 +11,9 @@ const PolicyPrivacy = () => {
         </Head>
 
         <PublicLayout>
-            Privacy Policy lorem ipsum
+            Privacy Policy lorem ipsum lorem sit dolor sit amet consectetur adipisicing elit.
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. 
+            <Button variant="contained" color="primary" href="/">Home</Button>
         </PublicLayout>
         </>
     )

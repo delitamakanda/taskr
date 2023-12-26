@@ -44,8 +44,10 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'authentication.apps.AuthenticationConfig',
 
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -63,6 +65,7 @@ AUTH_USER_MODEL = 'core.CustomUser'
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -147,10 +150,24 @@ NEXTJS_SETTINGS = {
     "nextjs_server_url": "http://localhost:3000",
 }
 
+# Simple JWT Settings
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'UPDATE_LAST_LOGIN': True,
+    'ALGORITHM': 'HS512',
+    'SIGNING_KEY': SECRET_KEY,
+}
+
 # Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
 
@@ -158,8 +175,8 @@ REST_FRAMEWORK = {
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Allauth Configuration
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 EMAIL_CONFIRM_REDIRECT_BASE_URL = 'http://127.0.0.1:8000/email/confirm/'
 PASSWORD_RESET_CONFIRM_REDIRECT_BASE_URL = 'http://127.0.0.1:8000/password-reset/confirm/'
@@ -175,6 +192,10 @@ SOCIAL_ACCOUNT_PROVIDERS = {
             'profile',
             'email',
         ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'VERIFIED_EMAIL': True,
     }
 }
 
@@ -182,6 +203,16 @@ GOOGLE_LOGIN_REDIRECT_URL = 'localhost:8000/'
 
 REST_AUTH = {
     'USE_JWT': True,
-    'JWT_AUTH_COOKIE': 'taskr',
-    'JWT_AUTH_REFRESH_COOKIE': 'taskr-refresh',
+    'JWT_AUTH_HTTPONLY': False,
 }
+
+# cors headers configuration
+
+if DEBUG:
+    CORS_ORIGIN_ALLOW_ALL = True
+else:
+    CORS_ALLOWED_ORIGINS = [
+        'http://localhost:3000/',
+        'http://127.0.0.1:8000',
+        'http://localhost:8000/',
+    ]

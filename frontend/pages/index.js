@@ -3,10 +3,19 @@ import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
 import { Button } from '@mui/material'
 import PublicLayout from '@/components/layouts/publicLayout';
+import { useRouter } from 'next/router';
+import { signIn, useSession } from 'next-auth/react';
+
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home(props) {
+  const router = useRouter();
+  const { data: session, status } = useSession();
+  if (status === 'loading') return <div>Loading...</div>;
+  if (session) {
+    return router.push('/');
+  }
   return (
     <>
       <Head>
@@ -18,9 +27,8 @@ export default function Home(props) {
         <main className={`${styles.main} ${inter.className}`}>
           <Button onClick={props.toggleTheme} color="info">toggle theme</Button>
         </main>
-      <PublicLayout>
-        Public layout
-      </PublicLayout>
+        <Button onClick={() => signIn(undefined, { callbackUrl: '/'})} color="info">Sign In</Button>
+      <PublicLayout />
     </>
   )
 }
