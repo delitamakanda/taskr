@@ -13,8 +13,9 @@ export default function Home(props) {
   const router = useRouter();
   const { data: session, status } = useSession();
   if (status === 'loading') return <div>Loading...</div>;
+  console.log(status);
   if (session) {
-    return router.push('/');
+    router.push('/profile');
   }
   return (
     <>
@@ -27,7 +28,7 @@ export default function Home(props) {
         <main className={`${styles.main} ${inter.className}`}>
           <Button onClick={props.toggleTheme} color="info">toggle theme</Button>
         </main>
-        <Button onClick={() => signIn(undefined, { callbackUrl: '/'})} color="info">Sign In</Button>
+        <Button onClick={() => signIn(undefined, { callbackUrl: '/profile'})} color="info">Sign In</Button>
       <PublicLayout />
     </>
   )

@@ -1,4 +1,4 @@
-import NextAuth from "next-auth/next";
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
@@ -7,7 +7,7 @@ const BACKEND_ACCESS_TOKEN_LIFETIME = 40* 60 * 1000; // 40 minutes
 const BACKEND_REFRESH_TOKEN_LIFETIME = 6 * 24 * 60 * 60 * 1000; // 6 days
 
 const getCurrentEpochTime = () => {
-    return Math.floor(Date.now().getTime() / 1000);
+    return Math.floor(new Date().getTime() / 1000);
 };
 
 const SIGNIN_IN_HANDLERS = {
@@ -51,33 +51,33 @@ export const authOptions = {
                 username: {
                     label: "Username",
                     type: "text",
+                    required: true,
                     placeholder: "Username",
-                    required: true
                 },
                 password: {
                     label: "Password",
                     type: "password",
+                    required: true,
                     placeholder: "Password",
-                    required: true
                 }
             },
-            async authorize(credentials, req) {
-                console.log(credentials);
-                console.log(req);
+            async authorize(credentials) {
                 try {
                     const response = await axios({
                         url: process.env.NEXTAUTH_BACKEND_URL + 'auth/login/',
                         method: 'POST',
-                        data: credentials,
+                        data: JSON.stringify(credentials),
                         headers: {
                             'Content-Type': 'application/json'
                         }
                     });
-                    return response.data;
+                    if (response.data) {
+                        return response.data;
+                    }
                 } catch (error) {
                     console.error(error);
+                    return null;
                 }
-                return null;
             },
         }),
         GoogleProvider({
@@ -122,8 +122,8 @@ export const authOptions = {
                 token['access_token'] = backendResponse.data.access;
                 token['refresh_token'] = backendResponse.data.refresh;
                 token['ref'] = getCurrentEpochTime() + BACKEND_ACCESS_TOKEN_LIFETIME;
-                return token;
             }
+            return token;
         },
         async session({token}) {
             return token;

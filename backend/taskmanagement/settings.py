@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
-    'django_nextjs.apps.DjangoNextJSConfig',
     'core.apps.CoreConfig',
     'authentication.apps.AuthenticationConfig',
 
@@ -146,10 +145,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-NEXTJS_SETTINGS = {
-    "nextjs_server_url": "http://localhost:3000",
-}
-
 # Simple JWT Settings
 
 from datetime import timedelta
@@ -210,6 +205,26 @@ REST_AUTH = {
 
 if DEBUG:
     CORS_ORIGIN_ALLOW_ALL = True
+    CORS_ALLOW_CREDENTIALS = True
+    CORS_ALLOWED_ALL_ORIGINS = True
+    CORS_ALLOW_HEADERS = (
+        'accept',
+        'accept-encoding',
+        'authorization',
+        'content-type',
+    )
+    CORS_ALLOW_ORIGIN_REGEX_WHITELIST = (
+        r'^http://localhost:3000/',
+        r'^http://127.0.0.1:8000',
+        r'^http://localhost:8000/',
+    )
+    CORS_ALLOW_METHODS = (
+        'DELETE',
+        'GET',
+        'PATCH',
+        'POST',
+        'PUT',
+    )
 else:
     CORS_ALLOWED_ORIGINS = [
         'http://localhost:3000/',

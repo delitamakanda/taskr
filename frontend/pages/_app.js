@@ -9,7 +9,7 @@ import darkTheme from '@/styles/theme/darkTheme'
 import '@/styles/globals.css'
 const clientCache = createEmotionCache()
 
-const App = ({ Component, emotionCache = clientCache, pageProps: { session, ...pageProps } }) => {
+const App = ({ Component, emotionCache = clientCache, pageProps: { session, pageProps } }) => {
   const [activeTheme, setActiveTheme ] = useState(lightTheme);
   const [selectedTheme, setSelectedTheme ] = useState('light');
 
@@ -27,14 +27,14 @@ const App = ({ Component, emotionCache = clientCache, pageProps: { session, ...p
     (theme);
   }
   return (
+    <SessionProvider session={session}>
     <CacheProvider value={emotionCache}>
-      <SessionProvider session={session}>
       <ThemeProvider theme={activeTheme}>
         <CssBaseline />
         <Component {...pageProps} toggleTheme={toggleTheme} />
       </ThemeProvider>
-    </SessionProvider>
     </CacheProvider>
+    </SessionProvider>
   )
 }
 
