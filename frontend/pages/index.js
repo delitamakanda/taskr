@@ -27,9 +27,12 @@ export default function Home(props) {
       </Head>
         <main className={`${styles.main} ${inter.className}`}>
           <Button onClick={props.toggleTheme} color="info">toggle theme</Button>
-        </main>
+          <h1 className="text-3xl font-bold underline">
+      Hello world!
+    </h1>
         <Button onClick={() => signIn(undefined, { callbackUrl: '/profile'})} color="info">Sign In</Button>
       <PublicLayout />
+        </main>
     </>
   )
 }
