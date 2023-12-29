@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import axios from "axios";
-import { Button } from "@mui/material";
 
-export default function Profile() {
+export default function DashboardPage() {
     const { data: session, status } = useSession({ required: true });
     const [user, setUser] = useState(null);
 
@@ -32,8 +31,8 @@ export default function Profile() {
                 <p>#{session.user.pk}</p>
                 <>{session.user.email}</>
                 <button onClick={() => signOut()}>Sign Out</button>
-                <Button onClick={() => getUserDetails(true)}>User details (with token)</Button>
-                <Button onClick={() => getUserDetails(false)}>User details (with no token)</Button>
+                <button onClick={() => getUserDetails(true)}>User details (with token)</button>
+                <button onClick={() => getUserDetails(false)}>User details (with no token)</button>
             </div>
         )
     }
