@@ -7,7 +7,6 @@ export const PRICING_CARDS = [
         freatures: [
           'Unlimited blocks for teams',
           'Unlimited file uploads',
-          '30 day page history',
           'Invite 2 guests',
         ],
       },
@@ -19,7 +18,6 @@ export const PRICING_CARDS = [
         freatures: [
           'Unlimited blocks for teams',
           'Unlimited file uploads',
-          '1 year day page history',
           'Invite 10 guests',
         ],
       },
