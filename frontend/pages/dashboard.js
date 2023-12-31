@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import axios from "axios";
+import DashboardSetup from '@/components/dashboard-setup/dashboard-setup';
+import { redirect } from 'next/navigation';
 
 export default function DashboardPage() {
     const { data: session, status } = useSession({ required: true });
@@ -22,18 +24,25 @@ export default function DashboardPage() {
     };
 
     if (status === 'loading') return <div>Loading...</div>;
-    console.log(session);
-    console.log(status);
     if (session) {
         return (
-            <div>
+            <main className="flex over-hidden h-screen">
+                    <div className="bg-background
+        h-screen
+        w-screen
+        flex
+        justify-center
+        items-center">
+
+        </div>
+            <DashboardSetup />
                 <h1>Hello {session.user.username}</h1>
                 <p>#{session.user.pk}</p>
                 <>{session.user.email}</>
                 <button onClick={() => signOut()}>Sign Out</button>
                 <button onClick={() => getUserDetails(true)}>User details (with token)</button>
                 <button onClick={() => getUserDetails(false)}>User details (with no token)</button>
-            </div>
+            </main>
         )
     }
     return (

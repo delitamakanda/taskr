@@ -1,5 +1,6 @@
 import { clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import axios from 'axios';
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs))
@@ -25,3 +26,19 @@ export const getURL = () => {
   url = url.charAt(url.length - 1) === '/'? url : `${url}/`;
   return url;
 }
+
+export const postData = async (url, data) => {
+  console.log('post', url, data);
+  const response = await axios.post(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'same-origin',
+    body: JSON.stringify(data),
+  });
+  if (!response.status === 200) {
+    throw new Error(response.statusText);
+  }
+  return response.json();
+};
