@@ -11,244 +11,168 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.contrib.auth import get_user_model
 
-class Comment(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.id}'
-
-    class Meta:
-        ordering = ['-id']
-        verbose_name = 'Comment'
-        verbose_name_plural = 'Comments'
-
-
-class Team(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    title = models.CharField(max_length=250)
-    slug = models.SlugField(max_length=250, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    members = models.ManyToManyField(to=settings.AUTH_USER_MODEL, blank=True)
-
-    def __str__(self):
-        return self.title
-
-    def save(self, *args, **kwargs):
-        ''' On save, update uuid and ovoid clash with existing code '''
-        if not self.id:
-            self.id = uuid.uuid4()
-        if not self.slug:
-            self.slug = slugify(self.title)
-        super(Team, self).save(*args, **kwargs)
-
-    class Meta:
-        ordering = ['-id']
-        verbose_name = 'Team'
-        verbose_name_plural = 'Teams'
-
-
-class Share(models.Model):
-    SHARE_TYPE = (
-        ('read', 'Read only'),
-        ('read_write', 'Read and write'),
-    )
-    INPUT_STATE = (
-        (0, 'active'),
-        (1, 'inactive'),
-    )
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    type = models.CharField(max_length=10, choices=SHARE_TYPE, default='read')
-    timestamp = models.DateTimeField(auto_now_add=True)
-    state = models.IntegerField(choices=INPUT_STATE, default=0)
-    duration = models.IntegerField(default=172800000)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, blank=True, null=True)
-
-
-class Filter(models.Model):
-    CRITERIAS_FILTER = (
-        (0, 'Not equal'),
-        (1, 'Greater than'),
-        (2, 'Greater than or equal'),
-        (3, 'Less than'),
-        (4, 'Less than or equal'),
-        (5, 'Equal')
-    )
-    TYPE_FILTER = (
-        (0, 'Filtre de texte'),
-        (1, 'Filtre de date'),
-        (2, 'Filtre numérique'),
-    )
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+class Product(models.Model):
+    active = models.BooleanField(default=True)
     name = models.CharField(max_length=250)
-    criterias = models.IntegerField(choices=CRITERIAS_FILTER)
-    type = models.IntegerField(choices=TYPE_FILTER)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    image = models.URLField(blank=True, null=True)
+    metadata = models.TextField(blank=True, null=True)
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
-        super(Team, self).save(*args, **kwargs)
+    class Meta:
+        verbose_name = 'Product'
+        verbose_name_plural = 'Products'
+
+
+PRIING_TYPE_CHOICES = (
+    ('recurring', 'Recurring'),
+    ('one-time', 'One-Time'),
+)
+
+PRICING_PLAN_INTERVAL_CHOICES = (
+    ('day', 'Day'),
+    ('week', 'Week'),
+    ('month', 'Month'),
+    ('year', 'Year'),
+)
+
+class Price(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
+    description = models.TextField(blank=True, null=True)
+    unit_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    currency = models.CharField(max_length=3, default='USD')
+    type = models.CharField(max_length=250,choices=PRIING_TYPE_CHOICES, default='recurring')
+    interval = models.CharField(max_length=250, choices=PRICING_PLAN_INTERVAL_CHOICES, default='month')
+    interval_count = models.IntegerField(default=1)
+    trial_period_days = models.IntegerField(default=30)
+    metadata = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Price'
+        verbose_name_plural = 'Prices'
+
+class Workspace(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    title = models.CharField(max_length=250)
+    icon_id = models.CharField(max_length=250, default='icon.png')
+    data = models.TextField(blank=True, null=True)
+    in_trash = models.TextField(blank=True, null=True)
+    logo = models.URLField(blank=True, null=True)
+    banner_url = models.URLField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Workspace'
+        verbose_name_plural = 'Workspaces'
+
+
+class Folder(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=250)
+    icon_id = models.CharField(max_length=250, default='icon.png')
+    data = models.TextField(blank=True, null=True)
+    in_trash = models.TextField(blank=True, null=True)
+    banner_url = models.URLField(blank=True, null=True)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Folder'
+        verbose_name_plural = 'Folders'
+
+class File(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=250)
+    icon_id = models.CharField(max_length=250, default='icon.png')
+    data = models.TextField(blank=True, null=True)
+    in_trash = models.TextField(blank=True, null=True)
+    banner_url = models.URLField(blank=True, null=True)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, blank=True, null=True)
+    folder = models.ForeignKey(Folder, on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'File'
+        verbose_name_plural = 'Files'
+
+
+SUBSCRIPTION_STATUS_CHOICES = (
+    ('unpaid', 'Unpaid'),
+    ('active', 'Active'),
+    ('trialing', 'Trialing'),
+    ('past_due', 'Past Due'),
+    ('canceled', 'Canceled'),
+    ('incomplete', 'Incomplete'),
+    ('incomplete_expired', 'Incomplete Expired'),
+)
+
+class Subscription(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    status = models.CharField(max_length=250, choices=SUBSCRIPTION_STATUS_CHOICES, default='unpaid')
+    metadata = models.TextField(blank=True, null=True)
+    price = models.ForeignKey(Price, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    cancel_at_period_end = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    current_period_start = models.DateTimeField(auto_now_add=True)
+    current_period_end = models.DateTimeField(auto_now_add=True)
+    ended_at = models.DateTimeField(blank=True, null=True)
+    canceled_at = models.DateTimeField(blank=True, null=True)
+    trial_start = models.DateTimeField(blank=True, null=True)
+    trial_end = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Subscription'
+        verbose_name_plural = 'Subscriptions'
+
+
+class Collaborators(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Collaborator'
+        verbose_name_plural = 'Collaborators'
+
 
 class CustomUser(AbstractUser):
+    avatar_url = models.URLField(blank=True, null=True)
+    billing_address = models.CharField(max_length=250, blank=True, null=True)
+    payment_method = models.CharField(max_length=250, blank=True, null=True)
 
     def __str__(self):
         return self.email
 
+    def get_short_name(self):
+        return self.email
 
-class Tag(models.Model):
+
+    def get_full_name(self):
+        return self.email
+
+class Customer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    name = models.CharField(max_length=250)
-    slug = models.SlugField(max_length=250, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    stripe_customer_id = models.CharField(max_length=250, blank=True, null=True)
 
-    def __str__(self):
-        return self.name
+    class Meta:
+        verbose_name = 'Customer'
+        verbose_name_plural = 'Customers'
+
+class ProductRelation(models.Model):
+    prices = models.ManyToManyField(Price)
+
+    class Meta:
+        verbose_name = 'Product Relation'
+        verbose_name_plural = 'Product Relations'
+
+class PriceRelation(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Price Relation'
+        verbose_name_plural = 'Price Relations'
     
-    class Meta:
-        ordering = ['-id', '-created_at']
-        verbose_name = 'Tag'
-        verbose_name_plural = 'Tags'
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super(Tag, self).save(*args, **kwargs)
-
-
-class History(models.Model):
-    INPUT_TYPE = (
-        ('create', 'creation'),
-        ('edit', 'modification'),
-        ('delete', 'suppression'),
-    )
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    type = models.CharField(max_length=10, choices=INPUT_TYPE)
-    modified_field = models.CharField(max_length=150)
-    old_value = models.CharField(max_length=150)
-    new_value = models.CharField(max_length=150)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, blank=True, null=True)
-
-    def __str__(self):
-        return 'f {self.modified_field}: {self.old_value} -> {self.new_value}'
-
-    class Meta:
-        ordering = ['-id']
-        verbose_name = 'History'
-        verbose_name_plural = 'Histories'
-
-class ItemBase(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='%(class)s_related', on_delete=models.CASCADE)
-    title = models.CharField(max_length=250)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        abstract = True
-
-    def render(self):
-        return render_to_string('items/content/{}.html'.format(self._meta.model_name), {'item': self})
-
-    def __str__(self):
-        return self.title
-
-class Text(ItemBase):
-    content = models.TextField()
-
-class File(ItemBase):
-    file = models.FileField(upload_to='files')
-
-class Image(ItemBase):
-    file = models.FileField(upload_to='images')
-
-class Video(ItemBase):
-    url = models.URLField()
-
-class Link(ItemBase):
-    url = models.URLField()
-
-
-class Page(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    content_type = models.ForeignKey(ContentType, limit_choices_to={'model__in':('text', 'link', 'video', 'image', 'file')}, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    item = GenericForeignKey('content_type', 'object_id')
-    tags = models.ManyToManyField(Tag, blank=True)
-    comments = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
-    share = models.ForeignKey(Share, on_delete=models.CASCADE, blank=True, null=True)
-    history = models.ForeignKey(History, on_delete=models.CASCADE, blank=True, null=True)
-
-    class Meta:
-        ordering = ['-id']
-
-
-class Table(models.Model):
-    INPUT_STATE = (
-        ('IP', 'In-progress'),
-        ('CL', 'Closed'),
-        ('AW', 'Awaiting'),
-        ('NS', 'Not Started'),
-        ('AN', 'Analysis'),
-    )
-    INPUT_PRIORITY = (
-        (0, 'Low'),
-        (1, 'Medium'),
-        (2, 'High'),
-    )
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    title = models.CharField(max_length=250)
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    deadline_at = models.DateTimeField(blank=True, null=True)
-    state = models.CharField(max_length=2, choices=INPUT_STATE, default='NS')
-    assignee = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='tables', on_delete=models.CASCADE)
-    priority = models.IntegerField(choices=INPUT_PRIORITY, default=0)
-    tags = models.ManyToManyField(Tag, blank=True)
-
-
-class Database(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    title = models.CharField(max_length=250)
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    tags = models.ManyToManyField(Tag, blank=True)
-    content_type = models.ForeignKey(ContentType, limit_choices_to={'model__in':('text', 'link', 'video', 'image', 'file')}, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    item = GenericForeignKey('content_type', 'object_id')
-    comments = models.ManyToManyField(Comment, blank=True)
-    collaborators = models.ManyToManyField(to=settings.AUTH_USER_MODEL, related_name='collaborators', blank=True)
-
-
-class Relationship(models.Model):
-    INPUT_TYPE = (
-        (0, 'One to One'),
-        (1, 'One to Many'),
-        (2, 'Many to Many'),
-    )
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    page_from = models.ForeignKey(Page, on_delete=models.CASCADE, blank=True, null=True, related_name='page_from')
-    table_from = models.ForeignKey(Table, on_delete=models.CASCADE, blank=True, null=True, related_name='table_from')
-    page_to = models.ForeignKey(Page, on_delete=models.CASCADE, blank=True, null=True, related_name='page_to')
-    table_to = models.ForeignKey(Table, on_delete=models.CASCADE, blank=True, null=True, related_name='table_to')
-    type = models.IntegerField(default=0, choices=INPUT_TYPE)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, blank=True, null=True, related_name='comment')
-    filters = models.ForeignKey(Filter, on_delete=models.CASCADE, blank=True, null=True)
-    linked_field = models.CharField(max_length=150, blank=True, null=True)
-    associated_field = models.CharField(max_length=150, blank=True, null=True)
-
-
-    
-
