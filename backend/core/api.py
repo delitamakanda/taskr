@@ -3,12 +3,14 @@ from core.models import (
     Folder,
     File,
     Product,
+    Subscription,
 )
 from core.serializers import (
     WorkspaceSerializer,
     FolderSerializer,
     FileSerializer,
     ProductSerializer,
+    SubscriptionSerializer,
 )
 
 from rest_framework import generics, permissions, filters
@@ -33,6 +35,19 @@ class WorkspaceListAPIView(generics.ListAPIView):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('title',)
     ordering_fields = ('id', 'title', 'created_at',)
+
+    def get_queryset(self):
+        return Workspace.objects.filter(owner=self.request.user)
+
+class WorkspaceCreateAPIView(generics.CreateAPIView):
+    queryset = Workspace.objects.all()
+    serializer_class = WorkspaceSerializer
+    permissions_classes = (permissions.IsAuthenticated,)
+
+class WorkspaceDeleteAPIView(generics.DestroyAPIView):
+    queryset = Workspace.objects.all()
+    serializer_class = WorkspaceSerializer
+    permissions_classes = (permissions.IsAuthenticated,)
 
 class WorkspaceDetailAPIView(generics.RetrieveAPIView):
     queryset = Workspace.objects.all()
@@ -67,3 +82,18 @@ class FileDetailAPIView(generics.RetrieveAPIView):
     permissions_classes = (permissions.IsAuthenticated,)
 
 
+class SubscriptionListAPIView(generics.ListAPIView):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
+    permissions_classes = (permissions.IsAuthenticated,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('id',)
+
+    def get_queryset(self):
+        return Subscription.objects.filter(user=self.request.user)
+
+
+class SubscriptionDetailAPIView(generics.RetrieveAPIView):
+    queryset = Subscription.objects.all()
+    serializer_class = SubscriptionSerializer
+    permissions_classes = (permissions.IsAuthenticated,)
