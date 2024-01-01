@@ -1,52 +1,50 @@
-import { useState } from "react";
-import { signOut, useSession } from "next-auth/react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import DashboardSetup from '@/components/dashboard-setup/dashboard-setup';
 import { redirect } from 'next/navigation';
+import { getUserSubscriptionStatus, getWorkspaces } from "@/lib/queries";
+import { SubscriptionModalProvider } from "@/lib/providers/subscription-modal-provider";
 
-export default function DashboardPage() {
-    const { data: session, status } = useSession({ required: true });
-    const [user, setUser] = useState(null);
+const DashboardPage = () =>{
+    const { data: session } = useSession({ required: true });
+    const [subscription, setSubscription] = useState(null);
+    const [workspace, setWorkspace] = useState(null);
 
-    const getUserDetails = async (useToken) => {
-        try {
-            const res = await axios({
-                method: 'GET',
-                url: process.env.NEXT_PUBLIC_BACKEND_URL + 'auth/me/',
-                headers: useToken? { Authorization: `Bearer ${session?.access_token}` } : {}
-            })
-            setUser(JSON.stringify(res.data));
-            console.log(res);
-            setUser(res.data);
-        } catch (err) {
-            console.log(err);
+    // console.log(session)
+
+    useEffect( () => {
+        async function fetchSubscription() {
+            const { data: subscription } = await getUserSubscriptionStatus(session);
+            setSubscription(subscription[0]);
         }
-    };
 
-    if (status === 'loading') return <div>Loading...</div>;
-    if (session) {
+        async function fetchWorkspace() {
+            const { data: workspaces } = await getWorkspaces(session);
+            setWorkspace(workspaces[0]);
+        }
+        fetchSubscription()
+        fetchWorkspace()
+    }, [])
+
+    if (!workspace) {
+
         return (
             <main className="flex over-hidden h-screen">
-                    <div className="bg-background
+            <SubscriptionModalProvider products={[]}>
+                <div className="bg-background
         h-screen
         w-screen
         flex
         justify-center
         items-center">
-
-        </div>
-            <DashboardSetup />
-                <h1>Hello {session.user.username}</h1>
-                <p>#{session.user.pk}</p>
-                <>{session.user.email}</>
-                <button onClick={() => signOut()}>Sign Out</button>
-                <button onClick={() => getUserDetails(true)}>User details (with token)</button>
-                <button onClick={() => getUserDetails(false)}>User details (with no token)</button>
-            </main>
-        )
-    }
-    return (
-        <>
-        </>
+            <DashboardSetup user={session?.user} subscription={subscription} />
+            </div>
+            </SubscriptionModalProvider>
+        </main>
     );
+    }
+    redirect(`/main/${workspace.id}/`)
 }
+
+
+export default DashboardPage;

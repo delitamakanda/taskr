@@ -12,13 +12,14 @@ import {
     DialogTitle,
 } from '../ui/dialog';
 import { Button } from '../ui/button';
+import { useUser } from '@/lib/providers/user-provider';
 
 export default function SubscriptionModal({ products }) {
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const { open, setOpen } = useSubscriptionModal();
-    const { subscription } = {};
-    const { user } = {};
+    const { subscription } = useUser();
+    const { user } = useUser();
 
     const handleSubscribe = async (price) => {
         try {
