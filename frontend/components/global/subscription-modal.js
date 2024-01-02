@@ -63,12 +63,12 @@ export default function SubscriptionModal({ products }) {
                             Choose a plan to subscribe to.
                         </p>
                     </DialogDescription>
-                   {products.length ? <div className="flex
+                   {products?.length ? <div className="flex
                   justify-between
                   items-center" key={product?.id}>
-                        {products.price.map((price) => (
-                            <React.Fragment key={price.id}>
-                                <strong>{formatPrice(price.price)} / <small>{price.interval}</small></strong>
+                        {products?.price?.map((price) => (
+                            <React.Fragment key={price?.id}>
+                                <strong>{formatPrice(price?.price)} / <small>{price?.interval}</small></strong>
                                 <Button disabled={loading} onClick={() => handleSubscribe(price)}>
                                     {loading ? <Loader /> : 'Subscribe'}
                                 </Button>

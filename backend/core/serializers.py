@@ -14,7 +14,7 @@ from core.models import (
 )
 
 
-class CustomUserSerializer(serializers.HyperlinkedModelSerializer):
+class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ('id', 'email', 'first_name', 'last_name', 'is_staff', 'is_active')
@@ -27,7 +27,7 @@ class CustomUserSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
-class WorkspaceSerializer(serializers.HyperlinkedModelSerializer):
+class WorkspaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workspace
         fields = '__all__'
@@ -35,12 +35,12 @@ class WorkspaceSerializer(serializers.HyperlinkedModelSerializer):
 
 
 
-class FolderSerializer(serializers.HyperlinkedModelSerializer):
+class FolderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Folder
         fields = '__all__'
 
-class FileSerializer(serializers.HyperlinkedModelSerializer):
+class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = File
         fields = '__all__'
@@ -54,13 +54,13 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 
 
-class CollaboratorsSerializer(serializers.HyperlinkedModelSerializer):
+class CollaboratorsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collaborators
         fields = '__all__'
 
 
-class CustomerSerializer(serializers.HyperlinkedModelSerializer):
+class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = '__all__'
@@ -78,13 +78,13 @@ class PriceRelationSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
-class ProductSerializer(serializers.HyperlinkedModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
 
 
-class PriceSerializer(serializers.HyperlinkedModelSerializer):
+class PriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Price
         fields = '__all__'

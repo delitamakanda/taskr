@@ -133,7 +133,7 @@ const Header = () => {
             </NavigationMenu>
             <aside className='flex w-full gap-2 justify-end'>
                 <Link href={'/dasboard'}>
-                    <Button onClick={() => signIn(undefined, { callbackUrl: '/dashboard'})} variant='btn-secondary' className="p-1 hidden sm:block">Login</Button>
+                    <Button onClick={() => signIn(undefined, { callbackUrl: '/'})} variant='btn-secondary' className="p-1 hidden sm:block">Login</Button>
                 </Link>
                 <Link href={'/register'}>
                     <Button variant='btn-primary' className="whitespace-nowrap">Register</Button>

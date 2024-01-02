@@ -231,3 +231,10 @@ else:
         'http://127.0.0.1:8000',
         'http://localhost:8000/',
     ]
+
+## media  configuration
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_URL = '/media/'
+
+## static  configuration
+STATIC_ROOT = os.path.join(BASE_DIR,'static')

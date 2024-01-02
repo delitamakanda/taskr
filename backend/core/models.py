@@ -59,7 +59,7 @@ class Workspace(models.Model):
     icon_id = models.CharField(max_length=250, default='icon.png')
     data = models.TextField(blank=True, null=True)
     in_trash = models.TextField(blank=True, null=True)
-    logo = models.URLField(blank=True, null=True)
+    logo = models.FileField(blank=True, null=True, upload_to='workspaces/%Y/%m/%d/')
     banner_url = models.URLField(blank=True, null=True)
 
     class Meta:

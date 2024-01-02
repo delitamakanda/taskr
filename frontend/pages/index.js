@@ -1,4 +1,6 @@
-import { useRouter } from 'next/router';
+'use client'
+
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Banner from '../public/appBanner.png';
 import Cal from '../public/cal.png'
@@ -12,11 +14,12 @@ import { PRICING_CARDS, PRICING_PLANS } from '@/lib/constants';
 import clsx from 'clsx';
 import CustomCard from '@/components/landing-page/custom-card';
 import { CardContent, CardTitle } from '@/components/ui/card';
+import Loader from '@/components/global/Loader';
 
 export default function HomePage() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  if (status === 'loading') return <div>Loading...</div>;
+  if (status === 'loading') return <Loader />;
   if (session) {
     router.push('/dashboard');
   }

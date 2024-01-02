@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import axios from "axios";
 
-const BACKEND_ACCESS_TOKEN_LIFETIME = 40* 60 * 1000; // 40 minutes
+const BACKEND_ACCESS_TOKEN_LIFETIME = 60 * 60 * 1000; // 60 minutes
 const BACKEND_REFRESH_TOKEN_LIFETIME = 6 * 24 * 60 * 60 * 1000; // 6 days
 
 const getCurrentEpochTime = () => {
@@ -128,13 +128,9 @@ export const authOptions = {
         async session({token}) {
             return token;
         },
-        async redirect({ url, baseUrl}) {
-            if (url.startsWith('/')) {
-                return `${baseUrl}${url}`;
-            } else if (new URL(url).origin === baseUrl) {
-                return baseUrl;
-            }
-        }
+        async redirect({url}) {
+            return url;
+        },
     },
 };
 

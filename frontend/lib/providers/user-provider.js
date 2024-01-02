@@ -21,7 +21,7 @@ export const UserProvider = ({ children }) => {
     const { toast } = useToast();
     const [user, setUser] = useState(null);
     const [subscription, setSubscription] = useState(null);
-    const { data: session } = useSession({ required: true });
+    const { data: session } = useSession();
 
     useEffect(() => {
         if (session) {
@@ -34,7 +34,7 @@ export const UserProvider = ({ children }) => {
             const res = await axios({
                 method: 'GET',
                 url: process.env.NEXT_PUBLIC_BACKEND_URL + 'auth/me/',
-                headers: { Authorization: `Bearer ${session?.access_token}` }
+                headers: { Authorization: `Bearer ${session.access_token}` }
             })
             setUser(JSON.stringify(res.data));
             console.log(res);

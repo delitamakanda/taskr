@@ -3,7 +3,7 @@ import dynamic from "next/dynamic"
 import { useRouter } from "next/navigation";
 import React from "react";
 
-// todo popover component
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 
 const EmojiPicker = ({ children, getValue }) => {
@@ -17,16 +17,14 @@ const EmojiPicker = ({ children, getValue }) => {
     }
     return (
         <div className="flex items-center">
-            {children}
+            <Popover>
+                <PopoverTrigger className="cursor-pointer">{children}</PopoverTrigger>
+                <PopoverContent className="p-0 border-none">
             <Picker
-                onClick={handleEmojiClick}
-                style={{
-                    position: "absolute",
-                    zIndex: 1000,
-                    top: 0,
-                    right: 0,
-                }}
-            />
+                onEmojiClick={handleEmojiClick}
+                />
+                </PopoverContent>
+            </Popover>
         </div>
     )
 };
