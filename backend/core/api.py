@@ -97,3 +97,4 @@ class SubscriptionDetailAPIView(generics.RetrieveAPIView):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
     permissions_classes = (permissions.IsAuthenticated,)
+
