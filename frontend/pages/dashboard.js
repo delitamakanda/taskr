@@ -15,12 +15,16 @@ const DashboardPage = () =>{
     useEffect( () => {
         async function fetchSubscription() {
             const { data: subscription } = await getUserSubscriptionStatus(session);
-            setSubscription(subscription[0]);
+            if (subscription && subscription.length > 0) {
+                setSubscription(subscription[0]);
+            }
         }
 
         async function fetchWorkspace() {
             const { data: workspaces } = await getWorkspaces(session);
-            setWorkspace(workspaces[0]);
+            if (workspace && workspaces.length > 0) {
+                setWorkspace(workspaces[0]);
+            }
         }
         fetchSubscription()
         fetchWorkspace()

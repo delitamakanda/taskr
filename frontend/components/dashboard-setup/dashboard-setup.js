@@ -9,10 +9,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui
 import { Button } from "../ui/button";
 import { createWorkspace } from "@/lib/queries";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import EmojiPicker from '../global/emoji-picker'
 
 const DashboardSetup = ({ user, subscription}) => {
     const { toast } = useToast();
     const router = useRouter();
+    const [selectedEmoji, setSelectedEmoji] = useState('💼');
     const { data: session } = useSession({ required: true });
     const { register, handleSubmit, reset, formState: { isSubmitting: isLoading, errors} } = useForm({
         mode: 'onChange',
@@ -51,7 +53,9 @@ const DashboardSetup = ({ user, subscription}) => {
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-4">
                             <div className="text-5xl">
-                                
+                                <EmojiPicker getValue={(emoji) => setSelectedEmoji(emoji)}>
+                                {selectedEmoji}
+                                </EmojiPicker>
                             </div>
                             <div className="w-full">
                                 
